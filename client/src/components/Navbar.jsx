@@ -1,22 +1,30 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Home, AlertCircle, CheckSquare, BarChart2, Award } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { LayoutDashboard, MessageSquareText, CircleAlert } from 'lucide-react';
 
-const Navbar = () => {
+export default function Navbar() {
   return (
-    <nav className="navbar">
+    <nav className="navbar" aria-label="Main navigation">
       <div className="nav-container">
-        <Link to="/" className="nav-logo">LocalConnect</Link>
+        <NavLink to="/" end className="nav-logo">LocalConnect</NavLink>
         <div className="nav-links">
-          <Link to="/" className="nav-item"><BarChart2 size={18} /> Dashboard</Link>
-          <Link to="/feed" className="nav-item"><Home size={18} /> Feed</Link>
-          <Link to="/issues" className="nav-item"><AlertCircle size={18} /> Issues</Link>
-          <Link to="/tasks" className="nav-item"><CheckSquare size={18} /> Tasks</Link>
-          <Link to="/leaderboard" className="nav-item"><Award size={18} /> Leaders</Link>
+          <NavLink to="/" end className={({ isActive }) =>
+            `nav-item${isActive ? ' active' : ''}`}>
+            <LayoutDashboard size={18} />
+            <span>Home</span>
+          </NavLink>
+          <NavLink to="/feed" className={({ isActive }) =>
+            `nav-item${isActive ? ' active' : ''}`}>
+            <MessageSquareText size={18} />
+            <span>Neighborhood Feed</span>
+          </NavLink>
+          <NavLink to="/issues" className={({ isActive }) =>
+            `nav-item${isActive ? ' active' : ''}`}>
+            <CircleAlert size={18} />
+            <span>Local Issues</span>
+          </NavLink>
         </div>
       </div>
     </nav>
   );
-};
-
-export default Navbar;
+}

@@ -1,60 +1,61 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getMetrics } from '../services/api';
 
-const Dashboard = () => {
-  const [metrics, setMetrics] = useState({
-    totalPosts: 0,
-    totalIssues: 0,
-    tasksCompleted: 0,
-    activityScore: 0
-  });
+export default function Dashboard() {
+  const [metrics, setMetrics] = useState({ totalPosts: 0, totalIssues: 0 });
 
   useEffect(() => {
-    const fetchMetrics = async () => {
-      try {
-        const { data } = await getMetrics();
-        setMetrics(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchMetrics();
+    let active = true;
+    getMetrics()
+      .then(({ data }) => {
+        if (active) {
+          setMetrics({
+            totalPosts: data.totalPosts ?? 0,
+            totalIssues: data.totalIssues ?? 0,
+          });
+        }
+      })
+      .catch(() => {});
+    return () => { active = false; };
   }, []);
 
   return (
     <div>
-      <div className="hero-section" style={{marginBottom: '3rem'}}>
-        <h1 className="page-title" style={{marginBottom: '0.5rem'}}>Welcome to LocalConnect</h1>
-        <p className="card-description" style={{fontSize: '1.2rem'}}>Your neighborhood's digital hub for staying connected and productive.</p>
-      </div>
-      
-      <div className="card">
-        <h2 className="card-title" style={{marginBottom: '1.5rem'}}>Community Activity Overview</h2>
+      <section className="hero-section">
+        <h1 className="page-title">A better neighborhood starts together.</h1>
+        <p className="card-description">
+          Share local updates, keep neighbors informed, and help solve
+          the problems that matter in your community.
+        </p>
+        <p>
+          <Link to="/feed" className="btn-primary">Explore neighborhood feed</Link>
+          {' '}
+          <Link to="/issues" className="btn-primary">Report a local issue</Link>
+        </p>
+      </section>
+
+      <section className="card">
+        <h2 className="card-title">Your community at a glance</h2>
         <div className="metrics-grid">
           <div className="metric-card">
             <span className="metric-value">{metrics.totalPosts}</span>
-            <span className="metric-label">Total Posts</span>
+            <span className="metric-label">Neighborhood updates</span>
           </div>
           <div className="metric-card">
             <span className="metric-value">{metrics.totalIssues}</span>
-            <span className="metric-label">Issues Reported</span>
-          </div>
-          <div className="metric-card">
-            <span className="metric-value">{metrics.tasksCompleted}</span>
-            <span className="metric-label">Tasks Completed</span>
-          </div>
-          <div className="metric-card">
-            <span className="metric-value">{metrics.activityScore}</span>
-            <span className="metric-label">Activity Score</span>
+            <span className="metric-label">Issues reported</span>
           </div>
         </div>
-      </div>
-      <div className="card">
-        <h2 className="card-title">Project Status</h2>
-        <p className="card-description">This dashboard provides a high-level overview of our community productivity and engagement metrics.</p>
-      </div>
+      </section>
+
+      <section className="card">
+        <h2 className="card-title">Small updates. Real community impact.</h2>
+        <p className="card-description">
+          Share an announcement, let neighbors know about a local event,
+          or report a broken streetlight. Useful information helps everyone.
+        </p>
+      </section>
     </div>
   );
-};
-
-export default Dashboard;
+}
